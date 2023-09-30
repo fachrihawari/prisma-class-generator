@@ -101,12 +101,6 @@ export class FileComponent implements Echoable {
 			})
 		})
 
-		if (this.prismaClass.types) {
-			this.prismaClass.types.forEach(type => {
-				this.registerImport(type + "Type", "./" + type.toLowerCase() + "_type")
-			})
-		}
-
 		if (generator.getConfig().useGraphQL) {
 			this.registerImport('ID', '@nestjs/graphql')
 			this.registerImport('Int', '@nestjs/graphql')

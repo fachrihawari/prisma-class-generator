@@ -113,9 +113,6 @@ class PrismaConvertor {
             const relationTypes = (0, util_1.uniquify)(model.fields
                 .filter((field) => field.relationName && model.name !== field.type)
                 .map((v) => v.type));
-            const typesTypes = (0, util_1.uniquify)(model.fields
-                .filter(field => field.kind == "object" && model.name !== field.type)
-                .map(v => v.type));
             const enums = model.fields.filter((field) => field.kind === 'enum');
             classComponent.fields = model.fields
                 .filter((field) => {
@@ -134,7 +131,6 @@ class PrismaConvertor {
                 extractRelationFields === true
                     ? []
                     : enums.map((field) => field.type.toString());
-            classComponent.types = typesTypes;
             if (useGraphQL) {
                 const deco = new decorator_component_1.DecoratorComponent({
                     name: 'ObjectType',
@@ -170,22 +166,9 @@ class PrismaConvertor {
                         extractRelationFields: false,
                         useGraphQL: this.config.useGraphQL,
                     })),
-                    ...this.dmmf.datamodel.types.map((model) => this.getClass({
-                        model,
-                        extractRelationFields: true,
-                        postfix: 'Type',
-                        useGraphQL: this.config.useGraphQL,
-                    })),
                 ];
             }
-            return [
-                ...models.map((model) => this.getClass({ model, useGraphQL: this.config.useGraphQL })),
-                ...this.dmmf.datamodel.types.map((model) => this.getClass({
-                    model,
-                    postfix: 'Type',
-                    useGraphQL: this.config.useGraphQL,
-                })),
-            ];
+            return models.map((model) => this.getClass({ model, useGraphQL: this.config.useGraphQL }));
         };
         this.convertField = (dmmfField) => {
             var _a;
@@ -241,7 +224,7 @@ class PrismaConvertor {
                 field.type = type;
             }
             else {
-                field.type = dmmfField.type + "Type";
+                field.type = dmmfField.type;
             }
             if (dmmfField.isList) {
                 field.type = (0, util_1.arrayify)(field.type);
